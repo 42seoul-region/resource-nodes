@@ -1,0 +1,5 @@
+# Run command with --device=/dev/kvm --group-add $(getent group kvm | cut -d: -f3)
+
+FROM ubuntu:20.04
+
+RUN apt update && apt install -y cpu-checker
