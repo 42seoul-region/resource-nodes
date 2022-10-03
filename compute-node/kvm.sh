@@ -26,10 +26,10 @@ if [ $command = 'install' ]; then
     # Usage: run sudo virt-manager
 
     # add me to kvm group?
-    read -p 'add me to libvirt and kvm group? (y/n): ' ANSWER
-    if [ $ANSWER = 'y' ]; then
+    # read -p 'add me to libvirt and kvm group? (y/n): ' ANSWER
+    # if [ $ANSWER = 'y' ]; then
         $self adduser
-    fi
+    # fi
 elif [ $command = 'adduser' ]; then
     username=$2
     if [ ! $username ]; then
