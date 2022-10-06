@@ -4,9 +4,9 @@ import os
 import configparser
 
 config = configparser.ConfigParser()
-config.read('/etc/neutron/neutron.conf')
+config.read('/etc/neutron/plugins/ml2/linuxbridge_agent.ini')
 
-config['DEFAULT']['transport_url'] = 'rabbit://openstack:{RABBIT_PASS}@{HOST_RABBITMQ}:5672/'.format(**os.environ)
+config['DEFAULT']['transport_url'] = 'rabbit://openstack:{RABBIT_PASS}@{HOST_VLAN_CONTROLLER}:5672/'.format(**os.environ)
 
 config['keystone_authtoken']['www_authenticate_uri'] = os.environ['KEYSTONE_PUBLIC_ENDPOINT']
 config['keystone_authtoken']['auth_url'] = os.environ['KEYSTONE_INTERNAL_ENDPOINT']
@@ -20,5 +20,5 @@ config['keystone_authtoken']['password'] = os.environ['NEUTRON_PASS']
 
 config['oslo_concurrency']['lock_path'] = '/var/lib/neutron/tmp'
 
-with open('/etc/neutron/neutron.conf', 'w') as f1:
+with open('/etc/neutron/plugins/ml2/linuxbridge_agent.ini', 'w') as f1:
     config.write(f1)

@@ -12,18 +12,7 @@ COPY config-nova-compute.py /usr/local/bin/config-nova-compute.py
 COPY config-nova.py /usr/local/bin/config-nova.py
 COPY .env .
 
-RUN eval $(cat .env) config-neutron.py
-RUN eval $(cat .env) config-nova.py
-RUN eval $(cat .env) config-nova-compute.py
+COPY docker-entrypoint.sh /usr/local/bin
 
-# entry: /usr/sbin/libvirtd
-
-# sudo systemctl restart nova-compute
-# sudo systemctl enable nova-compute
-# sudo systemctl restart neutron-linuxbridge-agent
-# sudo systemctl enable neutron-linuxbridge-agent
-
-# nova-manage cell_v2 create_cell \
-#     --name cell1 \
-#     --database_connection  mysql+pymysql://root:secretmysql@127.0.0.1/nova?charset=utf8 \
-#     --transport-url rabbit://stackrabbit:secretrabbit@mqserver:5672/
+ENTRYPOINT [ "docker-entrypoint.sh" ]
+CMD [ "nova-compute", "--config-file=/etc/nova/nova-compute.conf" ]

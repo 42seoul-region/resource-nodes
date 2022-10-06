@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  mariadb:
+    image: mariadb:10.9
+    volumes:
+      - ./data/mariadb:/var/lib/mysql
+    env_file:
+      - .env
+    network_mode: "host"
+    command: --log-warning=1 --max-connections=512
+    healthcheck:
+      test: [ "healthcheck.sh", "--su=mysql", "--connect", "--innodb_initialized" ]
+      interval: 1s
+      timeout: 1s
+      retries: 20
+      start_period: 1s
+    restart: unless-stopped
+  rabbitmq:
+    build:
+      context: ./rabbitmq
+      dockerfile: Dockerfile
+      args:
+        - RABBIT_PASS
+    env_file:
+      - .env
+    network_mode: "host"
+    restart: unless-stopped
+  nova-compute:
+    build:
+      context: ./nova-compute
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    network_mode: "host"
+    privileged: true
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
