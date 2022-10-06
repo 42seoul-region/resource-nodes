@@ -10,22 +10,24 @@ services:
     network_mode: "host"
     command: --log-warning=1 --max-connections=512
     healthcheck:
-      test: [ "healthcheck.sh", "--su=mysql", "--connect", "--innodb_initialized" ]
+      test: [ "CMD", "healthcheck.sh", "--su=mysql", "--connect", "--innodb_initialized" ]
       interval: 1s
       timeout: 1s
       retries: 20
       start_period: 1s
     restart: unless-stopped
   rabbitmq:
-    build:
-      context: ./rabbitmq
-      dockerfile: Dockerfile
-      args:
-        - RABBIT_PASS
+    image: rabbitmq:3.11
     env_file:
       - .env
     network_mode: "host"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+      start_period: 3s
   nova-compute:
     build:
       context: ./nova-compute

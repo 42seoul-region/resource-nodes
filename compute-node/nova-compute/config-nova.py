@@ -6,9 +6,11 @@ import configparser
 config = configparser.ConfigParser()
 config.read('/etc/nova/nova.conf')
 
-config['DEFAULT']['transport_url'] = 'rabbit://openstack:{RABBIT_PASS}@{HOST_RABBITMQ}:5672/'.format(**os.environ)
+config['DEFAULT']['transport_url'] = 'rabbit://{CONTROLLER_RABBITMQ_USER}:{CONTROLLER_RABBITMQ_PASS}@{HOST_VLAN_CONTROLLER}:5672/'.format(**os.environ)
 config['DEFAULT']['my_ip'] = os.environ['HOST_VLAN_LOCAL']
 
+if 'keystone_authtoken' not in config:
+    config['keystone_authtoken'] = {}
 config['keystone_authtoken']['www_authenticate_uri'] = os.environ['KEYSTONE_PUBLIC_ENDPOINT']
 config['keystone_authtoken']['auth_url'] = os.environ['KEYSTONE_INTERNAL_ENDPOINT']
 config['keystone_authtoken']['memcached_servers'] = '{HOST_VLAN_CONTROLLER}:11211'.format(**os.environ)
@@ -44,6 +46,8 @@ config['placement']['auth_url'] = 'http://{HOST_VLAN_CONTROLLER}:5000/v3'.format
 config['placement']['username'] = os.environ['PLACEMENT_API_USER']
 config['placement']['password'] = os.environ['PLACEMENT_API_PASS']
 
+if 'oslo_concurrency' not in config:
+    config['oslo_concurrency'] = {}
 config['oslo_concurrency']['lock_path'] = '/var/lib/nova/tmp'
 
 with open('/etc/nova/nova.conf', 'w') as f1:
