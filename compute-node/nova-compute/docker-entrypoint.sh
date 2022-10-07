@@ -22,15 +22,15 @@ configure() {
   echo "configure nova-compute.conf..."
   NOVA_KVM_ACCELERATION=$(egrep -c '(vmx|svm)' /proc/cpuinfo) config-nova-compute.py
 
-  echo "add cell $CELL_NAME..."
-  echo nova-manage cell_v2 create_cell \
-    --name $CELL_NAME \
-    --database_connection  "mysql+pymysql://$MARIADB_USER:$MARIADB_PASSWORD@$HOST_VLAN_LOCAL/$MARIADB_DATABASE?charset=utf8" \
-    --transport-url "rabbit://$RABBITMQ_DEFAULT_USER:$RABBITMQ_DEFAULT_PASS@$HOST_VLAN_LOCAL:5672/"
-  nova-manage cell_v2 create_cell \
-    --name $CELL_NAME \
-    --database_connection  "mysql+pymysql://$MARIADB_USER:$MARIADB_PASSWORD@$HOST_VLAN_LOCAL/$MARIADB_DATABASE?charset=utf8" \
-    --transport-url "rabbit://$RABBITMQ_DEFAULT_USER:$RABBITMQ_DEFAULT_PASS@$HOST_VLAN_LOCAL:5672/"
+  # echo "add cell $CELL_NAME..."
+  # echo nova-manage cell_v2 create_cell \
+  #   --name $CELL_NAME \
+  #   --database_connection  "mysql+pymysql://$MARIADB_USER:$MARIADB_PASSWORD@$HOST_VLAN_LOCAL/$MARIADB_DATABASE?charset=utf8" \
+  #   --transport-url "rabbit://$RABBITMQ_DEFAULT_USER:$RABBITMQ_DEFAULT_PASS@$HOST_VLAN_LOCAL:5672/"
+  # nova-manage cell_v2 create_cell \
+  #   --name $CELL_NAME \
+  #   --database_connection  "mysql+pymysql://$MARIADB_USER:$MARIADB_PASSWORD@$HOST_VLAN_LOCAL/$MARIADB_DATABASE?charset=utf8" \
+  #   --transport-url "rabbit://$RABBITMQ_DEFAULT_USER:$RABBITMQ_DEFAULT_PASS@$HOST_VLAN_LOCAL:5672/"
   nova-manage db sync
   # adduser $(whoami) libvirt
   # adduser $(whoami) kvm
@@ -51,8 +51,11 @@ PID_LIBVIRTD=$!
 neutron-linuxbridge-agent --config-file=/etc/neutron/plugins/ml2/linuxbridge_agent.ini &
 PID_NEUTRON=$!
 
-# nova-conductor &
-# PID_NOVA_CONDUCTOR=$!
+nova-conductor &
+PID_NOVA_CONDUCTOR=$!
+
+"$@" &
+PID_MAIN=$!
 
 trap "service_down; exit" SIGTERM
 
@@ -60,7 +63,11 @@ function service_down() {
   echo "Terminating services..."
   kill -TERM $PID_LIBVIRTD
   kill -TERM $PID_NEUTRON
-  # kill -TERM $PID_NOVA_CONDUCTOR
+  kill -TERM $PID_NOVA_CONDUCTOR
+  kill -TERM $PID_MAIN
 }
 
-exec "$@"
+wait $PID_LIBVIRTD
+wait $PID_NEUTRON
+wait $PID_NOVA_CONDUCTOR
+wait $PID_MAIN

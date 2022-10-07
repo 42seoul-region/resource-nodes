@@ -45,3 +45,11 @@ services:
     volumes:
         - '/dev/kvm:/dev/kvm'
         - '/lib/modules:/lib/modules'
+        - '/var/run/libvirt/libvirt-sock:/var/run/libvirt/libvirt-sock'
+  phpmyadmin:
+    image: phpmyadmin:latest
+    env_file:
+        - .env
+    network_mode: "host"
+    depends_on:
+        - mariadb

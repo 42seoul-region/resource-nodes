@@ -10,7 +10,8 @@ config['api_database']['connection'] = 'mysql+pymysql://{NOVA_DATABASE_USER}:{NO
 config['database']['connection'] = 'mysql+pymysql://{MARIADB_USER}:{MARIADB_PASSWORD}@{HOST_VLAN_LOCAL}:3306/{MARIADB_DATABASE}'.format(**os.environ)
 
 
-config['DEFAULT']['transport_url'] = 'rabbit://{CONTROLLER_RABBITMQ_USER}:{CONTROLLER_RABBITMQ_PASS}@{HOST_VLAN_CONTROLLER}:5672/'.format(**os.environ)
+# config['DEFAULT']['transport_url'] = 'rabbit://{CONTROLLER_RABBITMQ_USER}:{CONTROLLER_RABBITMQ_PASS}@{HOST_VLAN_CONTROLLER}:5672/'.format(**os.environ)
+config['DEFAULT']['transport_url'] = 'rabbit://{RABBITMQ_DEFAULT_USER}:{RABBITMQ_DEFAULT_PASS}@localhost:5672/'.format(**os.environ)
 config['DEFAULT']['my_ip'] = os.environ['HOST_VLAN_LOCAL']
 
 if 'keystone_authtoken' not in config:
