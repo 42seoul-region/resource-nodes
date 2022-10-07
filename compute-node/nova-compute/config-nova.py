@@ -6,6 +6,10 @@ import configparser
 config = configparser.ConfigParser()
 config.read('/etc/nova/nova.conf')
 
+config['api_database']['connection'] = 'mysql+pymysql://{NOVA_DATABASE_USER}:{NOVA_DATABASE_PASSWORD}@{NOVA_DATABASE_HOST}:{NOVA_DATABASE_PORT}/{NOVA_API_DATABASE_SCHEME}'.format(**os.environ)
+config['database']['connection'] = 'mysql+pymysql://{MARIADB_USER}:{MARIADB_PASSWORD}@{HOST_VLAN_LOCAL}:3306/{MARIADB_DATABASE}'.format(**os.environ)
+
+
 config['DEFAULT']['transport_url'] = 'rabbit://{CONTROLLER_RABBITMQ_USER}:{CONTROLLER_RABBITMQ_PASS}@{HOST_VLAN_CONTROLLER}:5672/'.format(**os.environ)
 config['DEFAULT']['my_ip'] = os.environ['HOST_VLAN_LOCAL']
 

@@ -2,6 +2,7 @@
 
 import os
 import configparser
+import socket
 
 config = configparser.ConfigParser()
 config.read('/etc/neutron/plugins/ml2/linuxbridge_agent.ini')

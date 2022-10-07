@@ -42,3 +42,6 @@ services:
       rabbitmq:
         condition: service_healthy
     restart: unless-stopped
+    volumes:
+        - '/dev/kvm:/dev/kvm'
+        - '/lib/modules:/lib/modules'
