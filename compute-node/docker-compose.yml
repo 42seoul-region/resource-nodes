@@ -24,7 +24,7 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
-      interval: 3s
+      interval: 10s
       timeout: 5s
       retries: 30
       start_period: 3s

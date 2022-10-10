@@ -14,8 +14,9 @@ else:
     config['libvirt']['virt_type'] = 'qemu'
     print('Not activated KVM acceleration')
 
-config['DEFAULT']['transport_url'] = 'rabbit://{RABBITMQ_DEFAULT_USER}:{RABBITMQ_DEFAULT_PASS}@localhost:5672/'.format(**os.environ)
+config['DEFAULT']['transport_url'] = 'rabbit://{RABBITMQ_DEFAULT_USER}:{RABBITMQ_DEFAULT_PASS}@{HOST_VLAN_LOCAL}:5672/'.format(**os.environ)
 config['DEFAULT']['my_ip'] = os.environ['HOST_VLAN_LOCAL']
+config['DEFAULT']['instances_path'] = '/var/lib/nova/instances'
 
 if 'keystone_authtoken' not in config:
     config['keystone_authtoken'] = {}

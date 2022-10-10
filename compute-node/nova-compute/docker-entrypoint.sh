@@ -45,8 +45,8 @@ if [ ! -f /root/.nova_configured ]; then
   configure
 fi
 
-/usr/sbin/libvirtd &
-PID_LIBVIRTD=$!
+# /usr/sbin/libvirtd &
+# PID_LIBVIRTD=$!
 
 neutron-linuxbridge-agent --config-file=/etc/neutron/plugins/ml2/linuxbridge_agent.ini &
 PID_NEUTRON=$!
@@ -61,13 +61,13 @@ trap "service_down; exit" SIGTERM
 
 function service_down() {
   echo "Terminating services..."
-  kill -TERM $PID_LIBVIRTD
+  # kill -TERM $PID_LIBVIRTD
   kill -TERM $PID_NEUTRON
   kill -TERM $PID_NOVA_CONDUCTOR
   kill -TERM $PID_MAIN
 }
 
-wait $PID_LIBVIRTD
+# wait $PID_LIBVIRTD
 wait $PID_NEUTRON
 wait $PID_NOVA_CONDUCTOR
 wait $PID_MAIN
